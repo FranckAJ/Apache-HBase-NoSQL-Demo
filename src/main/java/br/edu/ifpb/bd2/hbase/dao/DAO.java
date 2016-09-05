@@ -24,7 +24,7 @@ public interface DAO<T, K> {
 	 * 
 	 * @param entity
 	 */
-	public void remove(T entity) throws BD2Exception;
+	public void remove(String row) throws BD2Exception;
 	
 	public T findByRow(K row) throws BD2Exception;
 	

@@ -3,6 +3,7 @@ package br.edu.ifpb.bd2.hbase.dao;
 import java.io.IOException;
 
 import org.apache.hadoop.hbase.TableName;
+import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
@@ -39,8 +40,13 @@ public class BookDAO extends AbstractDAO<ComicBook, String>{
 	}
 
 	@Override
-	public void remove(ComicBook entity) {
-		
+	public void remove(String row) throws BD2Exception {
+		Delete delete = new Delete(Bytes.toBytes(row));
+		try {
+			table.delete(delete);
+		} catch (IOException e) {
+			throw new BD2Exception("Ocorreu um erro ao tentar remover o registro "+ e.getMessage());
+		}
 	}
 
 	@Override

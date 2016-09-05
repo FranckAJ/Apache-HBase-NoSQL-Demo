@@ -52,7 +52,10 @@ public class Main {
 		//b.createTable("tb_book", s);
 		//b.add(bo);
 		//b.deleteTable("tb_book");
-		System.out.println(b.findByRow("12345"));
+		
+		System.out.println("ANTES DE REMOVER: "+ b.findByRow("12345"));
+		b.remove("12345");
+		System.out.println("DEPPOIS DE REMOVER: " +b.findByRow("12345"));
 	}
 
 }
