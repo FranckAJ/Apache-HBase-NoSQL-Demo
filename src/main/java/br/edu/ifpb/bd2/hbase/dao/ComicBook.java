@@ -4,6 +4,9 @@ public class ComicBook {
 
 	private String name;
 	private String isbn;
+	private Integer numberOfPages;
+	private Session session;
+	private Edition edition;
 
 	public ComicBook() {
 
@@ -25,8 +28,34 @@ public class ComicBook {
 		this.isbn = isbn;
 	}
 
+	public Session getSession() {
+		return session;
+	}
+
+	public void setSession(Session session) {
+		this.session = session;
+	}
+
+	public Integer getNumberOfPages() {
+		return numberOfPages;
+	}
+
+	public void setNumberOfPages(Integer numberOfPages) {
+		this.numberOfPages = numberOfPages;
+	}
+
+	public Edition getEdition() {
+		return edition;
+	}
+
+	public void setEdition(Edition edition) {
+		this.edition = edition;
+	}
+
 	@Override
 	public String toString() {
-		return "Book [name=" + name + ", isbn=" + isbn + "]";
+		return "ComicBook [name=" + name + ", isbn=" + isbn + ", session="
+				+ session + ", numberOfPages=" + numberOfPages + ", edition="
+				+ edition + "]";
 	}
 }

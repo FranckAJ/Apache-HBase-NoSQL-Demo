@@ -17,8 +17,9 @@ public interface DAO<T, K> {
 	 * 
 	 * @param entity
 	 * @return
+	 * @throws IOException 
 	 */
-	public T update(T entity) throws BD2Exception;
+	public T update(T entity) throws BD2Exception, IOException;
 	
 	/**
 	 * 

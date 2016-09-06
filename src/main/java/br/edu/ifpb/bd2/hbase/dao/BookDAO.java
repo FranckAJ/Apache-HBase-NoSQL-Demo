@@ -1,6 +1,10 @@
 package br.edu.ifpb.bd2.hbase.dao;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Delete;
@@ -29,14 +33,24 @@ public class BookDAO extends AbstractDAO<ComicBook, String>{
 	@Override
 	public void add(ComicBook entity) throws BD2Exception, IOException {
 		Put p = new Put(Bytes.toBytes(entity.getIsbn()));
+		
 	    p.addColumn(Bytes.toBytes(Familys.BOOK.toString()), Bytes.toBytes("name"), Bytes.toBytes(entity.getName()));
 	    p.addColumn(Bytes.toBytes(Familys.BOOK.toString()), Bytes.toBytes("isbn"), Bytes.toBytes(entity.getIsbn()));
+	    p.addColumn(Bytes.toBytes(Familys.BOOK.toString()), Bytes.toBytes("numberOfPage"), Bytes.toBytes(entity.getNumberOfPages()));
+	    
+	    p.addColumn(Bytes.toBytes(Familys.SESSION.toString()), Bytes.toBytes("name"), Bytes.toBytes(entity.getSession().getName()));
+	    p.addColumn(Bytes.toBytes(Familys.SESSION.toString()), Bytes.toBytes("localization"), Bytes.toBytes(entity.getSession().getLocalization()));
+	    
+	    p.addColumn(Bytes.toBytes(Familys.EDITION.toString()), Bytes.toBytes("name"), Bytes.toBytes(entity.getEdition().getName()));
+	    p.addColumn(Bytes.toBytes(Familys.EDITION.toString()), Bytes.toBytes("year"), Bytes.toBytes(entity.getEdition().getYear()));
+	    p.addColumn(Bytes.toBytes(Familys.EDITION.toString()), Bytes.toBytes("release"), Bytes.toBytes(entity.getEdition().getRelease().toString()));
 	    table.put(p);
 	}
 
 	@Override
-	public ComicBook update(ComicBook entity) {
-		return null;
+	public ComicBook update(ComicBook entity) throws BD2Exception, IOException {
+		this.add(entity);
+		return this.findByRow(entity.getIsbn());
 	}
 
 	@Override
@@ -59,10 +73,24 @@ public class BookDAO extends AbstractDAO<ComicBook, String>{
 	    	
 	        byte [] value = result.getValue(Bytes.toBytes(Familys.BOOK.toString()),Bytes.toBytes("name"));
 	        byte [] isbn = result.getValue(Bytes.toBytes(Familys.BOOK.toString()),Bytes.toBytes("isbn"));
+	        byte [] numberOfPages = result.getValue(Bytes.toBytes(Familys.BOOK.toString()),Bytes.toBytes("numberOfPage"));
+	       
+	        byte [] nameSession = result.getValue(Bytes.toBytes(Familys.SESSION.toString()),Bytes.toBytes("name"));
+	        byte [] localization = result.getValue(Bytes.toBytes(Familys.SESSION.toString()),Bytes.toBytes("localization"));
+	        
+	        byte [] nameEdition = result.getValue(Bytes.toBytes(Familys.EDITION.toString()),Bytes.toBytes("name"));
+	        byte [] yearEdition = result.getValue(Bytes.toBytes(Familys.EDITION.toString()),Bytes.toBytes("year"));
+	        byte [] release = result.getValue(Bytes.toBytes(Familys.EDITION.toString()),Bytes.toBytes("release"));
 
 	    	comicBook = new ComicBook();
 	    	comicBook.setName(Bytes.toString(value));
 	    	comicBook.setIsbn(Bytes.toString(isbn));
+	    	comicBook.setNumberOfPages(Bytes.toInt(numberOfPages));
+	    	Session session = new Session(Bytes.toString(nameSession), Bytes.toString(localization));
+	    	Edition edition = new Edition(Bytes.toString(nameEdition),Bytes.toInt(yearEdition),formatDate(release));
+	    	
+	    	comicBook.setSession(session);
+	    	comicBook.setEdition(edition);
 	    	
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -71,6 +99,16 @@ public class BookDAO extends AbstractDAO<ComicBook, String>{
 		return comicBook;
 	}
 	
-	
+	private Date formatDate(byte[] date){
+		String s = new String(date);
 
+		SimpleDateFormat sdt = new SimpleDateFormat("EE MMM dd HH:mm:ss z yyyy",Locale.ENGLISH);
+		Date dateFormated = null;
+		try {
+			dateFormated = sdt.parse(s);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return dateFormated;
+	}
 }
