@@ -13,8 +13,8 @@
   
 
 ### Execução
-* Iniciar HBase (Linha de comando): start-hbase.sh 
-* Parar Hbase (Linha de comando): stop-hbase.sh
+* Iniciar HBase (Linha de comando): start-hbase.sh (Em qualquer diretório se o HBASE_HOME estiver configurado)
+* Parar Hbase (Linha de comando): stop-hbase.sh (Em qualquer diretório se o HBASE_HOME estiver configurado)
 * local Shell (Linha de comando): hbase shell em (instalacao-do-hbase/bin) 
 * Master host (interface): http://localhost:16010/
 
