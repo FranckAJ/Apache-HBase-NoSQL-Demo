@@ -3,6 +3,8 @@ package br.edu.ifpb.bd2.hbase.dao;
 import java.io.IOException;
 
 /**
+ * Interface comum para todas os DAO's, possui assinatura dos métodos básicos de
+ * um CRUD.
  * 
  * @author <a href="https://github.com/FranckAJ">Franck Aragão</a>
  *
@@ -10,35 +12,37 @@ import java.io.IOException;
  * @param <K>
  */
 public interface DAO<T, K> {
-	
+
 	/**
+	 * Interface padrão utilizada para CRUD padrão nos D
 	 * 
 	 * @param entity
-	 * @throws IOException 
+	 * @throws IOException
 	 */
-	public void add(T entity) throws BD2Exception, IOException;
-	
+	void add(T entity) throws BD2Exception, IOException;
+
 	/**
 	 * 
 	 * @param entity
 	 * @return
-	 * @throws IOException 
+	 * @throws IOException
 	 */
-	public T update(T entity) throws BD2Exception, IOException;
-	
+	T update(T entity) throws BD2Exception, IOException;
+
 	/**
 	 * 
 	 * @param entity
+	 * @throws IOException 
 	 */
-	public void remove(String row) throws BD2Exception;
-	
+	void remove(String row) throws BD2Exception, IOException;
+
 	/**
 	 * 
 	 * @param row
 	 * @return
 	 * @throws BD2Exception
+	 * @throws IOException 
 	 */
-	public T findByRow(K row) throws BD2Exception;
-	
+	T findByRow(K row) throws BD2Exception, IOException;
 
 }

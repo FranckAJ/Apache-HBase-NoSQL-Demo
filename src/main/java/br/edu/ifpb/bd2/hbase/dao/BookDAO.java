@@ -24,7 +24,7 @@ public class BookDAO extends AbstractDAO<ComicBook, String>{
 	 private final TableName TABLE_NAME = TableName.valueOf("tb_book");
 	 private Table table;
 	 
-	 {
+	 public BookDAO() {
 		 try {
 			table = getConnection().getTable(TABLE_NAME);
 		} catch (IOException | BD2Exception e) {
@@ -46,6 +46,7 @@ public class BookDAO extends AbstractDAO<ComicBook, String>{
 	    p.addColumn(Bytes.toBytes(Familys.EDITION.toString()), Bytes.toBytes("name"), Bytes.toBytes(entity.getEdition().getName()));
 	    p.addColumn(Bytes.toBytes(Familys.EDITION.toString()), Bytes.toBytes("year"), Bytes.toBytes(entity.getEdition().getYear()));
 	    p.addColumn(Bytes.toBytes(Familys.EDITION.toString()), Bytes.toBytes("release"), Bytes.toBytes(entity.getEdition().getRelease().toString()));
+	   
 	    table.put(p);
 	}
 
@@ -56,7 +57,7 @@ public class BookDAO extends AbstractDAO<ComicBook, String>{
 	}
 
 	@Override
-	public void remove(String row) throws BD2Exception {
+	public void remove(String row) throws BD2Exception, IOException {
 		Delete delete = new Delete(Bytes.toBytes(row));
 		try {
 			table.delete(delete);
@@ -66,10 +67,10 @@ public class BookDAO extends AbstractDAO<ComicBook, String>{
 	}
 
 	@Override
-	public ComicBook findByRow(String row) throws BD2Exception {
+	public ComicBook findByRow(String row) throws BD2Exception, IOException {
 		Get theGet = new Get(Bytes.toBytes(row));
-		 Result result = null;
-		 ComicBook comicBook = null;
+		Result result = null;
+		ComicBook comicBook = null;
 	    try {
 	    	result = table.get(theGet);
 	    	
@@ -94,7 +95,6 @@ public class BookDAO extends AbstractDAO<ComicBook, String>{
 	    	comicBook.setEdition(edition);
 	    	
 		} catch (IOException e) {
-			e.printStackTrace();
 			throw new BD2Exception(e.getMessage());
 		}
 		return comicBook;
@@ -102,9 +102,9 @@ public class BookDAO extends AbstractDAO<ComicBook, String>{
 	
 	private Date formatDate(byte[] date){
 		String s = new String(date);
-
 		SimpleDateFormat sdt = new SimpleDateFormat("EE MMM dd HH:mm:ss z yyyy",Locale.ENGLISH);
 		Date dateFormated = null;
+		
 		try {
 			dateFormated = sdt.parse(s);
 		} catch (ParseException e) {

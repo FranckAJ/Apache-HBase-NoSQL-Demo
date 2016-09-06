@@ -15,7 +15,7 @@ public class MainSave {
 		
 		ComicBook hq = new ComicBook();
 		hq.setIsbn("12345");
-		hq.setName("Demolidor 34");
+		hq.setName("The Flash 34");
 		hq.setNumberOfPages(220);
 		hq.setSession(new Session("HQS", "2º Andar 1ª Fila"));
 		hq.setEdition(new Edition("Novos 52", 2012, new Date()));
