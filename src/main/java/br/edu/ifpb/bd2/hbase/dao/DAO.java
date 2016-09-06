@@ -2,8 +2,13 @@ package br.edu.ifpb.bd2.hbase.dao;
 
 import java.io.IOException;
 
-import br.edu.ifpb.bd2.hbase.BD2Exception;
-
+/**
+ * 
+ * @author <a href="https://github.com/FranckAJ">Franck Aragão</a>
+ *
+ * @param <T>
+ * @param <K>
+ */
 public interface DAO<T, K> {
 	
 	/**
@@ -27,6 +32,12 @@ public interface DAO<T, K> {
 	 */
 	public void remove(String row) throws BD2Exception;
 	
+	/**
+	 * 
+	 * @param row
+	 * @return
+	 * @throws BD2Exception
+	 */
 	public T findByRow(K row) throws BD2Exception;
 	
 

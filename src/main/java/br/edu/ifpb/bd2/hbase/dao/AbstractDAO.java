@@ -6,14 +6,10 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.HTableDescriptor;
-import org.apache.hadoop.hbase.MasterNotRunningException;
 import org.apache.hadoop.hbase.TableName;
-import org.apache.hadoop.hbase.ZooKeeperConnectionException;
 import org.apache.hadoop.hbase.client.Admin;
 import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
-
-import br.edu.ifpb.bd2.hbase.BD2Exception;
 
 /**
  * 
@@ -27,18 +23,23 @@ public abstract class AbstractDAO<T, K> implements DAO<T, K> {
 	private Connection conn;
 	private Admin admin;
 	
+	/**
+	 * cria instância de configurações do HBase
+	 */
 	{
 		conf = HBaseConfiguration.create();
 		}
 
 	/**
+	 * Obtém conexão do HBase
 	 * 
-	 * @return
+	 * @return conexão com HBase
 	 * @throws BD2Exception
 	 */
 	public Connection getConnection() throws BD2Exception {
 		try {
-			conn = ConnectionFactory.createConnection(conf);
+			if(conn == null)
+				conn = ConnectionFactory.createConnection(conf);
 		} catch (IOException e) {
 			throw new BD2Exception("Ocorreu um erro ao tentar conectar ao Banco de dados " + e);
 		}
@@ -46,23 +47,30 @@ public abstract class AbstractDAO<T, K> implements DAO<T, K> {
 	}
 
 	/**
+	 * Obtém acesso de admin do HBase.
 	 * 
-	 * @return
+	 * @return Objeto Admin
 	 * @throws BD2Exception
+	 * @throws IOException 
 	 */
-	public Admin getAdmin() throws BD2Exception {
+	public Admin getAdmin() throws BD2Exception, IOException {
 		this.getConnection();
 		try {
-			admin = conn.getAdmin();
+			if(admin == null)
+				admin = conn.getAdmin();
 		} catch (IOException e) {
 			throw new BD2Exception("Ocorreu um erro ao tentar recuperar o admin" + e);
+		} finally{
+			conn.close();
 		}
 		return admin;
 	}
 
 	/**
+	 * Método responsável por criar uma tabela no banco de dados.
 	 * 
-	 * @param name
+	 * Passando por parametro o nome da tabela e suas colunas.
+	 * 
 	 * @throws BD2Exception
 	 * @throws IOException
 	 */
@@ -83,21 +91,25 @@ public abstract class AbstractDAO<T, K> implements DAO<T, K> {
 	}
 	
     /**
-     * Delete a table
+     * Remover uma tabela existente no banco de dados.
+     * 
+     * @param nome da tabela a ser removida.
      */
     public void deleteTable(String name) throws BD2Exception {
         try {
+        	
         	this.getAdmin();
 			TableName tableName = TableName.valueOf(name);
             admin.disableTable(tableName);
             admin.deleteTable(tableName);
-        } catch (MasterNotRunningException e) {
-            e.printStackTrace();
-        } catch (ZooKeeperConnectionException e) {
-            e.printStackTrace();
         } catch (IOException e) {
-			e.printStackTrace();
-            throw new BD2Exception(e.getMessage());
+            throw new BD2Exception("Acorreu algum problema ao tentar remover tabela "+e.getMessage());
+		} finally {
+			try {
+				admin.close();
+			} catch (IOException e) {
+	            throw new BD2Exception("Acorreu algum problema ao tentar fechar admin "+e.getMessage());
+			}
 		}
     }
 }

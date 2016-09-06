@@ -1,4 +1,4 @@
-package br.edu.ifpb.bd2.hbase;
+package br.edu.ifpb.bd2.hbase.dao;
 
 public class BD2Exception extends Exception {
 

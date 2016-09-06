@@ -1,4 +1,4 @@
-package br.edu.ifpb.bd2.hbase.dao.enumerations;
+package br.edu.ifpb.bd2.hbase.enumerations;
 
 public enum Familys {
 	

@@ -1,4 +1,4 @@
-package br.edu.ifpb.bd2.hbase.dao;
+package br.edu.ifpb.bd2.hbase.entities;
 
 import java.util.Date;
 

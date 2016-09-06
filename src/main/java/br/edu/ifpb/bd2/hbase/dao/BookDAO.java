@@ -14,8 +14,10 @@ import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.util.Bytes;
 
-import br.edu.ifpb.bd2.hbase.BD2Exception;
-import br.edu.ifpb.bd2.hbase.dao.enumerations.Familys;
+import br.edu.ifpb.bd2.hbase.entities.ComicBook;
+import br.edu.ifpb.bd2.hbase.entities.Edition;
+import br.edu.ifpb.bd2.hbase.entities.Session;
+import br.edu.ifpb.bd2.hbase.enumerations.Familys;
 
 public class BookDAO extends AbstractDAO<ComicBook, String>{
 	
@@ -88,7 +90,6 @@ public class BookDAO extends AbstractDAO<ComicBook, String>{
 	    	comicBook.setNumberOfPages(Bytes.toInt(numberOfPages));
 	    	Session session = new Session(Bytes.toString(nameSession), Bytes.toString(localization));
 	    	Edition edition = new Edition(Bytes.toString(nameEdition),Bytes.toInt(yearEdition),formatDate(release));
-	    	
 	    	comicBook.setSession(session);
 	    	comicBook.setEdition(edition);
 	    	
