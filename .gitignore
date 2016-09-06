@@ -51,3 +51,5 @@ local.properties
 
 /RemoteSystemsTempFiles
 RemoteSystemsTempFiles/
+/target
+target/
