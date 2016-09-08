@@ -23,7 +23,7 @@ public class MainSave {
 		ComicBook hqThanos = new ComicBook();
 		hqThanos.setIsbn("123456");
 		hqThanos.setName("Thannos v3 vs Galactus");
-		hqThanos.setNumberOfPages(220);
+		hqThanos.setNumberOfPages(80);
 		hqThanos.setSession(new Session("HQS", "2º Andar 1ª Fila"));
 		hqThanos.setEdition(new Edition("thanos", 1887, new Date()));
 		

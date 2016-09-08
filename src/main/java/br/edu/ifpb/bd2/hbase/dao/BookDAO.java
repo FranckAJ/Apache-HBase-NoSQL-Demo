@@ -136,15 +136,74 @@ public class BookDAO extends AbstractDAO<ComicBook, String>{
 	
 	/**
 	 * 
+	 * @param year
+	 * @return
+	 * @throws IOException
+	 */
+	public List<String> findBookByPageSize(Integer pageSize) throws IOException{
+		List<String> books = new ArrayList<String>();
+    	Filter filter = new SingleColumnValueFilter(
+    			Bytes.toBytes(Familys.BOOK.toString()), Bytes.toBytes("numberOfPage"), 
+    			CompareOp.GREATER_OR_EQUAL, Bytes.toBytes(pageSize));
+    	
+    	Scan scan = new Scan();  
+        scan.setFilter(filter);  
+        ResultScanner rs = table.getScanner(scan);
+        for (Result result : rs) {  
+	        byte [] value = result.getValue(Bytes.toBytes(Familys.BOOK.toString()),Bytes.toBytes("name"));
+	        books.add(Bytes.toString(value));
+        }
+    	
+		return books;
+	}
+	
+	public List<ComicBook> findBookByName(String name) throws IOException{
+		List<ComicBook> cb = new ArrayList<ComicBook>();
+    	Filter filter = new SingleColumnValueFilter(
+    			Bytes.toBytes(Familys.BOOK.toString()), Bytes.toBytes("name"), 
+    			CompareOp.EQUAL, Bytes.toBytes(name));
+    	
+    	Scan scan = new Scan();  
+        scan.setFilter(filter);  
+        ResultScanner rs = table.getScanner(scan);
+        for (Result result : rs) {  
+	        byte [] value = result.getValue(Bytes.toBytes(Familys.BOOK.toString()),Bytes.toBytes("name"));
+	        byte [] isbn = result.getValue(Bytes.toBytes(Familys.BOOK.toString()),Bytes.toBytes("isbn"));
+	        byte [] numberOfPages = result.getValue(Bytes.toBytes(Familys.BOOK.toString()),Bytes.toBytes("numberOfPage"));
+	       
+	        byte [] nameSession = result.getValue(Bytes.toBytes(Familys.SESSION.toString()),Bytes.toBytes("name"));
+	        byte [] localization = result.getValue(Bytes.toBytes(Familys.SESSION.toString()),Bytes.toBytes("localization"));
+	        
+	        byte [] nameEdition = result.getValue(Bytes.toBytes(Familys.EDITION.toString()),Bytes.toBytes("name"));
+	        byte [] yearEdition = result.getValue(Bytes.toBytes(Familys.EDITION.toString()),Bytes.toBytes("year"));
+	        byte [] release = result.getValue(Bytes.toBytes(Familys.EDITION.toString()),Bytes.toBytes("release"));
+	        
+
+	    	ComicBook comicBook = new ComicBook();
+	    	comicBook.setName(Bytes.toString(value));
+	    	comicBook.setIsbn(Bytes.toString(isbn));
+	    	comicBook.setNumberOfPages(Bytes.toInt(numberOfPages));
+	    	Session session = new Session(Bytes.toString(nameSession), Bytes.toString(localization));
+	    	Edition edition = new Edition(Bytes.toString(nameEdition),Bytes.toInt(yearEdition),formatDate(release));
+	    	comicBook.setSession(session);
+	    	comicBook.setEdition(edition);
+	    	cb.add(comicBook);
+        }
+    	
+		return cb;
+	}
+	
+	/**
+	 * 
 	 * @param qualifier
 	 * @param familys
 	 * @return 
 	 * @throws IOException
 	 */
 	public List<String> findByMultipleColumns(String qualifier, Familys...familys) throws IOException{
-        List<Filter> filters = new ArrayList<Filter>();  
         List<String> results = new ArrayList<String>();
         
+        List<Filter> filters = new ArrayList<Filter>();  
         for (Familys family : familys) {
         	Filter filter = new SingleColumnValueFilter(
         			Bytes.toBytes(family.toString()), null, 
