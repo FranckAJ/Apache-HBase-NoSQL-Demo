@@ -32,5 +32,5 @@ HBase (https://hbase.apache.org/) é um banco de dados NoSQL, famílias de colun
  * Consulta por campo (Demo: consulta livros por quantidade de paginas, uso do GREATER_OR_EQUAL).
  * Consulta por qualificadores da tabela.
  * Consulta por Família de colunas.
- * Consulta por multiplicas colunas de uma vez.
+ * Consulta por multiplas colunas de uma vez.
 
