@@ -18,10 +18,13 @@ import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.filter.BinaryComparator;
 import org.apache.hadoop.hbase.filter.CompareFilter;
+import org.apache.hadoop.hbase.filter.CompareFilter.CompareOp;
 import org.apache.hadoop.hbase.filter.FamilyFilter;
 import org.apache.hadoop.hbase.filter.Filter;
+import org.apache.hadoop.hbase.filter.FilterList;
 import org.apache.hadoop.hbase.filter.FirstKeyOnlyFilter;
 import org.apache.hadoop.hbase.filter.QualifierFilter;
+import org.apache.hadoop.hbase.filter.SingleColumnValueFilter;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import br.edu.ifpb.bd2.hbase.entities.ComicBook;
@@ -29,11 +32,19 @@ import br.edu.ifpb.bd2.hbase.entities.Edition;
 import br.edu.ifpb.bd2.hbase.entities.Session;
 import br.edu.ifpb.bd2.hbase.enumerations.Familys;
 
+/**
+ * 
+ * @author <a href="https://github.com/FranckAJ">Franck Aragão</a>
+ *
+ */
 public class BookDAO extends AbstractDAO<ComicBook, String>{
 	
 	 private final TableName TABLE_NAME = TableName.valueOf("tb_book");
 	 private Table table;
 	 
+	 /**
+	  * 
+	  */
 	 public BookDAO() {
 		 try {
 			table = getConnection().getTable(TABLE_NAME);
@@ -42,6 +53,9 @@ public class BookDAO extends AbstractDAO<ComicBook, String>{
 		}
 	 }
 	
+	 /**
+	  * 
+	  */
 	@Override
 	public void add(ComicBook entity) throws BD2Exception, IOException {
 		Put p = new Put(Bytes.toBytes(entity.getIsbn()));
@@ -60,12 +74,18 @@ public class BookDAO extends AbstractDAO<ComicBook, String>{
 	    table.put(p);
 	}
 
+	/**
+	 * 
+	 */
 	@Override
 	public ComicBook update(ComicBook entity) throws BD2Exception, IOException {
 		this.add(entity);
 		return this.findByRow(entity.getIsbn());
 	}
 
+	/**
+	 * 
+	 */
 	@Override
 	public void remove(String row) throws BD2Exception, IOException {
 		try {
@@ -85,6 +105,13 @@ public class BookDAO extends AbstractDAO<ComicBook, String>{
 		}
 	}
 	
+	/**
+	 * 
+	 * @param column
+	 * @param args
+	 * @return
+	 * @throws IOException
+	 */
 	public List<String> findByColumnFamily(String column, String... args) throws IOException{
 		Filter filter = new FamilyFilter(CompareFilter.CompareOp.EQUAL,
 				new BinaryComparator(Bytes.toBytes(column)));
@@ -107,6 +134,46 @@ public class BookDAO extends AbstractDAO<ComicBook, String>{
 		return cells;
 	}
 	
+	/**
+	 * 
+	 * @param qualifier
+	 * @param familys
+	 * @return 
+	 * @throws IOException
+	 */
+	public List<String> findByMultipleColumns(String qualifier, Familys...familys) throws IOException{
+        List<Filter> filters = new ArrayList<Filter>();  
+        List<String> results = new ArrayList<String>();
+        
+        for (Familys family : familys) {
+        	Filter filter = new SingleColumnValueFilter(
+        			Bytes.toBytes(family.toString()), null, 
+        			CompareOp.EQUAL, Bytes.toBytes(qualifier));  
+        	filters.add(filter); 
+		}
+        
+        FilterList filterList = new FilterList(filters); 
+        Scan scan = new Scan();  
+        scan.setFilter(filterList);  
+        ResultScanner rs = table.getScanner(scan);
+        for (Result result : rs) {  
+        	for (Familys family : familys) {
+		        byte [] value = result.getValue(Bytes.toBytes(family.toString()),Bytes.toBytes("name"));
+		        results.add(Bytes.toString(value));
+        	}
+        }  
+        rs.close();  
+        
+        return results;
+	}
+	
+	/**
+	 * 
+	 * @param family
+	 * @param qualifier
+	 * @return
+	 * @throws IOException
+	 */
 	public String findByQualifier(Familys family, String qualifier) throws IOException{
 		Filter filter = new QualifierFilter(CompareFilter.CompareOp.EQUAL,
 				new BinaryComparator(Bytes.toBytes(qualifier)));
@@ -121,6 +188,9 @@ public class BookDAO extends AbstractDAO<ComicBook, String>{
 		return Bytes.toString(value);
 	}
 
+	/**
+	 * 
+	 */
 	@Override
 	public ComicBook findByRow(String row) throws BD2Exception, IOException {
 		Get theGet = new Get(Bytes.toBytes(row));
@@ -157,6 +227,10 @@ public class BookDAO extends AbstractDAO<ComicBook, String>{
 		return comicBook;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public List<ComicBook> findAll(){
 		List<ComicBook> list = new ArrayList<ComicBook>();
 		Scan scan = new Scan();
@@ -173,6 +247,11 @@ public class BookDAO extends AbstractDAO<ComicBook, String>{
 		return list;
 	}
 	
+	/**
+	 * 
+	 * @param date
+	 * @return
+	 */
 	private Date formatDate(byte[] date){
 		String s = new String(date);
 		SimpleDateFormat sdt = new SimpleDateFormat("EE MMM dd HH:mm:ss z yyyy",Locale.ENGLISH);
