@@ -22,7 +22,7 @@ HBase (https://hbase.apache.org/) é um banco de dados NoSQL, famílias de colun
 ### Aplicação Demo (Exemplo CRUD Livro)
  * Criar tabela.
  * Remover tabela.
- * Inserir registro em colunas (demo: Coluna BOOK, SESSION, EDITION).
+ * Inserir registro em familias de colunas (demo: Coluna BOOK, SESSION, EDITION).
  * Atualizar registros.
  * Remover registros.
  * Remover todos os registros de uma vez.
