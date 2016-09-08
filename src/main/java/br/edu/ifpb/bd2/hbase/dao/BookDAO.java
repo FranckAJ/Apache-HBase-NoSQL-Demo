@@ -1,6 +1,7 @@
 package br.edu.ifpb.bd2.hbase.dao;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -16,7 +17,11 @@ import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.client.Table;
+import org.apache.hadoop.hbase.filter.BinaryComparator;
+import org.apache.hadoop.hbase.filter.CompareFilter;
+import org.apache.hadoop.hbase.filter.Filter;
 import org.apache.hadoop.hbase.filter.FirstKeyOnlyFilter;
+import org.apache.hadoop.hbase.filter.QualifierFilter;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import br.edu.ifpb.bd2.hbase.entities.ComicBook;
@@ -78,6 +83,31 @@ public class BookDAO extends AbstractDAO<ComicBook, String>{
 				remove(comicBook.getIsbn());
 			}
 		}
+	}
+	
+	public void findByColumn(String row, String column) throws IOException{
+		Filter filter = new QualifierFilter(CompareFilter.CompareOp.EQUAL,
+				new BinaryComparator(Bytes.toBytes(column)));
+	    Scan scan = new Scan();
+	    scan.setFilter(filter);
+	    ResultScanner scanner = table.getScanner(scan);
+	    for (Result result : scanner) {
+			System.out.println(result);
+		}
+	}
+	
+	public String findByQualifier(Familys family, String qualifier) throws IOException{
+		Filter filter = new QualifierFilter(CompareFilter.CompareOp.EQUAL,
+				new BinaryComparator(Bytes.toBytes(qualifier)));
+		
+	    Scan scan = new Scan();
+	    scan.setFilter(filter);
+	    ResultScanner scanner = table.getScanner(scan);
+	    byte[] value = null;
+	    for (Result result : scanner) {
+	    	value = result.getValue(Bytes.toBytes(family.toString()), Bytes.toBytes(qualifier));
+	    }
+		return Bytes.toString(value);
 	}
 
 	@Override
