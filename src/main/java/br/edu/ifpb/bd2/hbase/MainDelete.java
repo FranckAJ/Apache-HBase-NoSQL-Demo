@@ -11,8 +11,13 @@ public class MainDelete {
 		
 		BookDAO dao = new BookDAO();
 		
-		System.out.println("## ANTES DE REMOVER: "+ dao.findByRow("12345"));
-		dao.remove("12345");
-		System.out.println("## DEPOIS DE REMOVER: " + dao.findByRow("12345"));
+		System.out.println("## ANTES DE REMOVER: "+ dao.findByRow("123456"));
+		dao.remove("123456");
+		
+		/*fecho as conexões com tabela*/
+		dao.getTable().close();
+
+		System.out.println("## DEPOIS DE REMOVER: " + dao.findByRow("123456"));
+		
 	}
 }

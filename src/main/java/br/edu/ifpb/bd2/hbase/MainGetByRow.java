@@ -14,7 +14,11 @@ public class MainGetByRow {
 		
 		ComicBook hq = dao.findByRow("12345");
 		
-		System.out.println("## " + hq);
+		if(hq != null)
+			System.out.println("## " + hq);
+		else
+			System.out.println("## Nehum dado econtrado!");
+		
+		dao.getTable().close();
 	}
-
 }

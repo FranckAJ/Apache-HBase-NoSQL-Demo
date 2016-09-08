@@ -19,6 +19,10 @@ public class MainUpdate {
 		hq.getEdition().setName("Originais anos 70/80");
 		hq.getEdition().setYear(1979);
 		
+		dao.getTable().close();
+		
 		System.out.println("## DEPOIS DE ATUALIZAR: "+ dao.update(hq));
+		
+		dao.getTable().close();
 	}
 }

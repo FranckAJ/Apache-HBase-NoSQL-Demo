@@ -63,11 +63,20 @@ public class BookDAO extends AbstractDAO<ComicBook, String>{
 
 	@Override
 	public void remove(String row) throws BD2Exception, IOException {
-		Delete delete = new Delete(Bytes.toBytes(row));
 		try {
+			Delete delete = new Delete(Bytes.toBytes(row));
 			table.delete(delete);
 		} catch (IOException e) {
 			throw new BD2Exception("Ocorreu um erro ao tentar remover o registro "+ e.getMessage());
+		}
+	}
+	
+	public void removeAll() throws BD2Exception, IOException{
+		List<ComicBook> hqs = findAll();
+		if(hqs != null){
+			for (ComicBook comicBook : hqs) {
+				remove(comicBook.getIsbn());
+			}
 		}
 	}
 
@@ -78,26 +87,28 @@ public class BookDAO extends AbstractDAO<ComicBook, String>{
 		ComicBook comicBook = null;
 	    try {
 	    	result = table.get(theGet);
-	    	
-	        byte [] value = result.getValue(Bytes.toBytes(Familys.BOOK.toString()),Bytes.toBytes("name"));
-	        byte [] isbn = result.getValue(Bytes.toBytes(Familys.BOOK.toString()),Bytes.toBytes("isbn"));
-	        byte [] numberOfPages = result.getValue(Bytes.toBytes(Familys.BOOK.toString()),Bytes.toBytes("numberOfPage"));
-	       
-	        byte [] nameSession = result.getValue(Bytes.toBytes(Familys.SESSION.toString()),Bytes.toBytes("name"));
-	        byte [] localization = result.getValue(Bytes.toBytes(Familys.SESSION.toString()),Bytes.toBytes("localization"));
-	        
-	        byte [] nameEdition = result.getValue(Bytes.toBytes(Familys.EDITION.toString()),Bytes.toBytes("name"));
-	        byte [] yearEdition = result.getValue(Bytes.toBytes(Familys.EDITION.toString()),Bytes.toBytes("year"));
-	        byte [] release = result.getValue(Bytes.toBytes(Familys.EDITION.toString()),Bytes.toBytes("release"));
+	    	if(!result.isEmpty()){
+		        byte [] value = result.getValue(Bytes.toBytes(Familys.BOOK.toString()),Bytes.toBytes("name"));
+		        byte [] isbn = result.getValue(Bytes.toBytes(Familys.BOOK.toString()),Bytes.toBytes("isbn"));
+		        byte [] numberOfPages = result.getValue(Bytes.toBytes(Familys.BOOK.toString()),Bytes.toBytes("numberOfPage"));
+		       
+		        byte [] nameSession = result.getValue(Bytes.toBytes(Familys.SESSION.toString()),Bytes.toBytes("name"));
+		        byte [] localization = result.getValue(Bytes.toBytes(Familys.SESSION.toString()),Bytes.toBytes("localization"));
+		        
+		        byte [] nameEdition = result.getValue(Bytes.toBytes(Familys.EDITION.toString()),Bytes.toBytes("name"));
+		        byte [] yearEdition = result.getValue(Bytes.toBytes(Familys.EDITION.toString()),Bytes.toBytes("year"));
+		        byte [] release = result.getValue(Bytes.toBytes(Familys.EDITION.toString()),Bytes.toBytes("release"));
+		        
 
-	    	comicBook = new ComicBook();
-	    	comicBook.setName(Bytes.toString(value));
-	    	comicBook.setIsbn(Bytes.toString(isbn));
-	    	comicBook.setNumberOfPages(Bytes.toInt(numberOfPages));
-	    	Session session = new Session(Bytes.toString(nameSession), Bytes.toString(localization));
-	    	Edition edition = new Edition(Bytes.toString(nameEdition),Bytes.toInt(yearEdition),formatDate(release));
-	    	comicBook.setSession(session);
-	    	comicBook.setEdition(edition);
+		    	comicBook = new ComicBook();
+		    	comicBook.setName(Bytes.toString(value));
+		    	comicBook.setIsbn(Bytes.toString(isbn));
+		    	comicBook.setNumberOfPages(Bytes.toInt(numberOfPages));
+		    	Session session = new Session(Bytes.toString(nameSession), Bytes.toString(localization));
+		    	Edition edition = new Edition(Bytes.toString(nameEdition),Bytes.toInt(yearEdition),formatDate(release));
+		    	comicBook.setSession(session);
+		    	comicBook.setEdition(edition);
+	    	}
 	    	
 		} catch (IOException e) {
 			throw new BD2Exception(e.getMessage());
@@ -133,4 +144,13 @@ public class BookDAO extends AbstractDAO<ComicBook, String>{
 		}
 		return dateFormated;
 	}
+
+	public Table getTable() {
+		return table;
+	}
+
+	public void setTable(Table table) {
+		this.table = table;
+	}
+	
 }

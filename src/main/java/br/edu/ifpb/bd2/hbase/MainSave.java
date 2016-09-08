@@ -34,5 +34,8 @@ public class MainSave {
 		
 		System.out.println("## "+ dao.findByRow("12345"));
 		System.out.println("## "+ dao.findByRow("123456"));
+		
+		dao.getTable().close(); 
+		
 	}
 }
