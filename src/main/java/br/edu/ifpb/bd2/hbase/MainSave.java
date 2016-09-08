@@ -20,10 +20,19 @@ public class MainSave {
 		hq.setSession(new Session("HQS", "2º Andar 1ª Fila"));
 		hq.setEdition(new Edition("Novos 52", 2012, new Date()));
 		
+		ComicBook hqThanos = new ComicBook();
+		hqThanos.setIsbn("123456");
+		hqThanos.setName("Thannos v3 vs Galactus");
+		hqThanos.setNumberOfPages(220);
+		hqThanos.setSession(new Session("HQS", "2º Andar 1ª Fila"));
+		hqThanos.setEdition(new Edition("thanos", 1887, new Date()));
+		
 		BookDAO dao = new BookDAO();
 		
 		dao.add(hq);
+		dao.add(hqThanos);
 		
 		System.out.println("## "+ dao.findByRow("12345"));
+		System.out.println("## "+ dao.findByRow("123456"));
 	}
 }

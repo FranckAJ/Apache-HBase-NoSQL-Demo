@@ -3,7 +3,9 @@ package br.edu.ifpb.bd2.hbase.dao;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import org.apache.hadoop.hbase.TableName;
@@ -11,7 +13,10 @@ import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
+import org.apache.hadoop.hbase.client.ResultScanner;
+import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.client.Table;
+import org.apache.hadoop.hbase.filter.FirstKeyOnlyFilter;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import br.edu.ifpb.bd2.hbase.entities.ComicBook;
@@ -98,6 +103,22 @@ public class BookDAO extends AbstractDAO<ComicBook, String>{
 			throw new BD2Exception(e.getMessage());
 		}
 		return comicBook;
+	}
+	
+	public List<ComicBook> findAll(){
+		List<ComicBook> list = new ArrayList<ComicBook>();
+		Scan scan = new Scan();
+		try {
+		scan.setFilter(new FirstKeyOnlyFilter());
+		ResultScanner scanner = table.getScanner(scan);
+		for (Result result : scanner) {
+			byte[] key = result.getRow();
+			list.add(findByRow(Bytes.toString(key)));
+		}	
+		} catch (IOException | BD2Exception e) {
+			e.printStackTrace();
+		}
+		return list;
 	}
 	
 	private Date formatDate(byte[] date){
