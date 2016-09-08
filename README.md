@@ -2,6 +2,7 @@
 ### Demostração de uso do banco de dados NoSql família de colunas.
 
 ### Info
+HBase é um banco de dados NoSQL, famílias de colunas que roda em cima do Hadoop (http://hadoop.apache.org/) como armazenamento de dados grande distribuído e escalável. Isto significa que HBase pode alavancar o paradigma de processamento distribuído do Hadoop Distributed File System (HDFS) e beneficiar de modelo de programação MapReduce do Hadoop. Ele se destina a acolher grandes tabelas com bilhões de linhas com potencialmente milhões de colunas e executar em um cluster de hardware commodity. Mas além de suas raízes Hadoop, HBase é um poderoso banco de dados em seu próprio direito, que combina recursos de consulta em tempo real com a velocidade de um armazenamento de chave / valor e processamento off-line ou em lote através de MapReduce. Em suma, HBase permite-lhe consultar registros individuais, bem como relatórios analíticos agregados obtêm em uma enorme quantidade de dados.
 
 
 ### Pré-requisitos
