@@ -1,7 +1,6 @@
 package br.edu.ifpb.bd2.hbase.dao;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,6 +18,7 @@ import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.filter.BinaryComparator;
 import org.apache.hadoop.hbase.filter.CompareFilter;
+import org.apache.hadoop.hbase.filter.FamilyFilter;
 import org.apache.hadoop.hbase.filter.Filter;
 import org.apache.hadoop.hbase.filter.FirstKeyOnlyFilter;
 import org.apache.hadoop.hbase.filter.QualifierFilter;
@@ -85,15 +85,26 @@ public class BookDAO extends AbstractDAO<ComicBook, String>{
 		}
 	}
 	
-	public void findByColumn(String row, String column) throws IOException{
-		Filter filter = new QualifierFilter(CompareFilter.CompareOp.EQUAL,
+	public List<String> findByColumnFamily(String column, String... args) throws IOException{
+		Filter filter = new FamilyFilter(CompareFilter.CompareOp.EQUAL,
 				new BinaryComparator(Bytes.toBytes(column)));
+		
+		List<String> cells = new ArrayList<String>();
 	    Scan scan = new Scan();
 	    scan.setFilter(filter);
 	    ResultScanner scanner = table.getScanner(scan);
+	    
 	    for (Result result : scanner) {
-			System.out.println(result);
+	    	for (String arg : args) {
+				byte [] value = result.getValue(Bytes.toBytes(column), Bytes.toBytes(arg));
+				
+				if(arg.equals("numberOfPage")) // para poder funcionar usando string...
+					cells.add(String.valueOf(Bytes.toInt(value)));
+				else
+					cells.add(Bytes.toString(value));
+			}
 		}
+		return cells;
 	}
 	
 	public String findByQualifier(Familys family, String qualifier) throws IOException{
