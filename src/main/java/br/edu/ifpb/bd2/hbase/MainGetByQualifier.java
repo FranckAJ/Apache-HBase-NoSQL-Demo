@@ -1,6 +1,7 @@
 package br.edu.ifpb.bd2.hbase;
 
 import java.io.IOException;
+import java.util.List;
 
 import br.edu.ifpb.bd2.hbase.dao.BD2Exception;
 import br.edu.ifpb.bd2.hbase.dao.BookDAO;
@@ -12,6 +13,16 @@ public class MainGetByQualifier {
 		
 		BookDAO dao = new BookDAO();
 		
-		System.out.println("##" + dao.findByQualifier(Familys.BOOK, "name"));
+		List<String> hqs = dao.findByQualifier(Familys.BOOK, "name");
+		
+		if(hqs != null){
+			for (String str : hqs) {
+				System.out.println("##"+ str);
+			}
+		}else{
+			System.out.println("## Nehum dado econtrado!");
+		}
+		
+		dao.getTable().close();
 	}
 }

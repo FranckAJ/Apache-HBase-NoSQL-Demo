@@ -34,9 +34,6 @@ public abstract class AbstractDAO<T, K> implements DAO<T, K> {
 
 	/**
 	 * Obtém conexão do HBase
-	 * 
-	 * @return conexão com HBase
-	 * @throws BD2Exception
 	 */
 	public Connection getConnection() throws BD2Exception {
 		try {

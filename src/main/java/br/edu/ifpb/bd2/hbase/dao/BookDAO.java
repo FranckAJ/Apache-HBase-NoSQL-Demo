@@ -125,7 +125,7 @@ public class BookDAO extends AbstractDAO<ComicBook, String>{
 	    	for (String arg : args) {
 				byte [] value = result.getValue(Bytes.toBytes(column), Bytes.toBytes(arg));
 				
-				if(arg.equals("numberOfPage")) // para poder funcionar usando string...
+				if(arg.equals("numberOfPage")) // (so assim encontra o int em bytes)...
 					cells.add(String.valueOf(Bytes.toInt(value)));
 				else
 					cells.add(Bytes.toString(value));
@@ -233,7 +233,8 @@ public class BookDAO extends AbstractDAO<ComicBook, String>{
 	 * @return
 	 * @throws IOException
 	 */
-	public String findByQualifier(Familys family, String qualifier) throws IOException{
+	public List<String> findByQualifier(Familys family, String qualifier) throws IOException{
+		List<String> results = new ArrayList<String>();
 		Filter filter = new QualifierFilter(CompareFilter.CompareOp.EQUAL,
 				new BinaryComparator(Bytes.toBytes(qualifier)));
 		
@@ -243,8 +244,9 @@ public class BookDAO extends AbstractDAO<ComicBook, String>{
 	    byte[] value = null;
 	    for (Result result : scanner) {
 	    	value = result.getValue(Bytes.toBytes(family.toString()), Bytes.toBytes(qualifier));
+	    	results.add(Bytes.toString(value));
 	    }
-		return Bytes.toString(value);
+		return results;
 	}
 
 	/**
@@ -252,11 +254,11 @@ public class BookDAO extends AbstractDAO<ComicBook, String>{
 	 */
 	@Override
 	public ComicBook findByRow(String row) throws BD2Exception, IOException {
-		Get theGet = new Get(Bytes.toBytes(row));
+		Get get = new Get(Bytes.toBytes(row));
 		Result result = null;
 		ComicBook comicBook = null;
 	    try {
-	    	result = table.get(theGet);
+	    	result = table.get(get);
 	    	if(!result.isEmpty()){
 		        byte [] value = result.getValue(Bytes.toBytes(Familys.BOOK.toString()),Bytes.toBytes("name"));
 		        byte [] isbn = result.getValue(Bytes.toBytes(Familys.BOOK.toString()),Bytes.toBytes("isbn"));
