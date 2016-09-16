@@ -6,7 +6,7 @@ HBase (https://hbase.apache.org/) é um banco de dados NoSQL, famílias de colun
 
 
 ### Pré-requisitos
-  * Sistema Operacional: Linux/Windows (USE LINUX É FODA!)
+  * Sistema Operacional: Linux/Windows
   * HBASE: http://mirror.nbtelecom.com.br/apache/hbase/stable/
   * JDK (Java Development kit), versão utilizada 1.8.
   * Variável de ambiante do java configurada JAVA_HOME.
